@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CDC GALAXY</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600&family=Unbounded:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0d1f;--card:#141a36;--txt:#eef2ff;--mut:#b0b8d6;--org:#ff7a3d;--lnk:#8c9bff;--rad:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--txt);line-height:1.5}
+h1,h2,h3,.logo{font-family:'Unbounded',sans-serif;line-height:1.2}
+a{color:var(--lnk);text-decoration:none}
+img{max-width:100%;display:block;border-radius:12px}
+.container{width:100%;max-width:1100px;margin:0 auto;padding:0 20px}
+/* Меню */
+.navbar{position:sticky;top:0;z-index:100;background:rgba(10,13,31,.9);backdrop-filter:blur(8px);border-bottom:1px solid rgba(140,155,255,.15);padding:14px 0}
+.navbar .container{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.logo{font-size:1.3rem}.logo span{color:var(--org)}
+.nav-links{display:flex;gap:16px;list-style:none;flex-wrap:wrap;font-size:.9rem}
+.nav-links a{color:var(--txt)}
+/* Hero */
+.hero{padding:40px 0}
+.hero .container{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center}
+.hero h1{font-size:clamp(1.5rem,3vw,2.5rem);margin:10px 0}
+.hero p{color:var(--mut);margin-bottom:15px}
+.btn{display:inline-flex;padding:12px 24px;border-radius:40px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:.2s}
+.btn-org{background:var(--org);color:#0a0d1f}.btn-org:hover{background:#ff915f}
+.btn-out{background:transparent;color:var(--txt);border:1px solid var(--lnk)}
+.badge{display:inline-block;background:var(--org);color:#0a0d1f;font-weight:bold;padding:4px 12px;border-radius:20px;font-size:.85rem}
+/* Секции */
+section{padding:40px 0}
+.sec-title{font-size:clamp(1.4rem,2.5vw,2rem);margin-bottom:25px}
+.sec-title::after{content:'';display:block;width:50px;height:3px;background:var(--org);margin-top:8px;border-radius:2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.card{background:var(--card);border-radius:var(--rad);padding:20px;display:flex;flex-direction:column;gap:8px}
+.card h3{font-size:1.1rem}.card p{color:var(--mut);font-size:.9rem}
+.card .icon{font-size:2rem}
+/* Галерея */
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.g-item{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:1;cursor:pointer;background:var(--card)}
+.g-item img{width:100%;height:100%;object-fit:cover;transition:.2s}
+.g-item:hover img{transform:scale(1.05);filter:brightness(.8)}
+.g-cap{position:absolute;bottom:0;left:0;right:0;padding:20px 10px 10px;background:linear-gradient(to top,rgba(10,13,31,.95),transparent);font-size:.85rem;pointer-events:none}
+/* Подвал */
+.footer{background:#060814;border-top:1px solid rgba(140,155,255,.15);padding:30px 0;margin-top:30px;font-size:.9rem;color:var(--mut)}
+.footer .container{display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px}
+/* Модалка */
+.modal{display:none;position:fixed;inset:0;background:rgba(10,13,31,.85);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;padding:20px}
+.modal.open{display:flex}
+.modal-box{background:var(--card);border-radius:var(--rad);padding:25px;width:100%;max-width:420px;position:relative}
+.close{position:absolute;top:10px;right:15px;font-size:1.8rem;cursor:pointer;background:none;border:none;color:var(--mut)}
+.f-group{margin-bottom:12px}
+.f-group label{display:block;font-size:.85rem;margin-bottom:4px}
+.f-group input{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(140,155,255,.3);background:rgba(10,13,31,.5);color:#fff;font-size:.95rem}
+.f-check{display:flex;gap:8px;margin:15px 0;font-size:.8rem;color:var(--mut)}
+.f-check a{text-decoration:underline}
+.f-status{margin-top:10px;text-align:center;font-size:.85rem;display:none;padding:8px;border-radius:6px}
+.f-status.err{display:block;color:#ff5e5e;background:rgba(255,94,94,.1)}
+.f-status.ok{display:block;color:#4ade80;background:rgba(74,222,128,.1)}
+/* Админка */
+#admin{display:none;position:fixed;inset:0;z-index:2000;background:var(--bg);overflow-y:auto;flex-direction:row}
+#admin.on{display:flex}
+.side{width:220px;background:#0f152e;padding:20px;border-right:1px solid rgba(140,155,255,.1);display:flex;flex-direction:column}
+.side h2{color:var(--org);font-size:1.1rem;margin-bottom:20px}
+.side ul{list-style:none}.side li{padding:10px;border-radius:6px;color:var(--org);background:rgba(255,122,61,.1);margin-bottom:8px}
+.side button{margin-top:auto;background:none;border:1px solid #ff5e5e;color:#ff5e5e;padding:8px;border-radius:6px;cursor:pointer}
+.main{flex:1;padding:25px;overflow-y:auto}
+.main h1{margin-bottom:20px;font-size:1.6rem}
+table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden}
+th,td{padding:12px;text-align:left;border-bottom:1px solid rgba(140,155,255,.1);font-size:.9rem}
+th{background:rgba(10,13,31,.5);color:var(--mut)}
+.del-btn{background:rgba(255,94,94,.2);color:#ff5e5e;border:none;padding:4px 10px;border-radius:6px;cursor:pointer}
+/* Логин */
+.login{display:flex;justify-content:center;align-items:center;height:100vh;width:100%}
+.login-box{background:var(--card);padding:30px;border-radius:var(--rad);width:100%;max-width:360px}
+.login-box h2{color:var(--org);text-align:center;margin-bottom:15px}
+.login-box input{width:100%;padding:12px;margin-bottom:10px;border-radius:8px;border:1px solid rgba(140,155,255,.3);background:rgba(10,13,31,.5);color:#fff}
+.login-box button{width:100%;padding:12px;border-radius:8px;border:none;background:var(--org);font-weight:bold;cursor:pointer}
+.err{color:#ff5e5e;font-size:.85rem;text-align:center;margin-bottom:10px;display:none}
+@media(max-width:700px){
+.hero .container{grid-template-columns:1fr}
+#admin.on{flex-direction:column}
+.side{width:100%;flex-direction:row;align-items:center;justify-content:space-between}
+.side ul{display:flex;gap:10px}.side button{margin:0}
+}
+</style>
+</head>
+<body>
+
+<!-- САЙТ -->
+<header class="navbar"><div class="container">
+<div class="logo">CDC <span>GALAXY</span></div>
+<ul class="nav-links">
+<li><a href="#services">Услуги</a></li><li><a href="#gallery">Фото</a></li>
+<li><a href="#vip">VIP</a></li><li><a href="#news">Новости</a></li>
+<li><a href="#faq">Вопросы</a></li><li><a href="#contacts">Контакты</a></li>
+</ul></div></header>
+
+<section class="hero"><div class="container">
+<div>
+<span class="badge">18+</span>
+<h1>CDC GALAXY — вечер, который не хочется заканчивать</h1>
+<p>Развлекательный комплекс в центре Якутска: боулинг, караоке, бильярд, ресторан, VIP-зоны и отель.</p>
+<button class="btn btn-org" onclick="openModal()">📞 Забронировать стол</button>
+</div>
+<img src="building.jpg" alt="Здание">
+</div></section>
+
+<section id="services"><div class="container">
+<h2 class="sec-title">Всё для отдыха</h2>
+<div class="grid">
+<div class="card"><div class="icon">🎳</div><h3>Боулинг</h3><p>Современные дорожки.</p></div>
+<div class="card"><div class="icon">🎤</div><h3>Караоке</h3><p>Тысячи песен.</p></div>
+<div class="card"><div class="icon">🎱</div><h3>Бильярд</h3><p>Русский и американский пул.</p></div>
+<div class="card"><div class="icon">🍸</div><h3>Show Club</h3><p>Бары и VIP-зоны.</p></div>
+<div class="card"><div class="icon">🍣</div><h3>Ресторан</h3><p>Японская и итальянская кухня.</p></div>
+<div class="card"><div class="icon">🛏️</div><h3>Отель и сауна</h3><p>5 номеров и сауна.</p></div>
+</div></div></section>
+
+<section id="gallery"><div class="container">
+<h2 class="sec-title">Атмосфера</h2>
+<div class="gal">
+<div class="g-item" onclick="openLight(this)"><img src="hotel.jpg" alt="Отель"><span class="g-cap">Номер в отеле</span></div>
+<div class="g-item" onclick="openLight(this)"><img src="prizes.jpg" alt="Призы"><span class="g-cap">Конкурсы и призы</span></div>
+<div class="g-item" onclick="openLight(this)"><img src="tournament.jpg" alt="Турниры"><span class="g-cap">Турниры по боулингу</span></div>
+<div class="g-item" onclick="openLight(this)"><img src="bar.jpg" alt="Бар"><span class="g-cap">Бар</span></div>
+<div class="g-item" onclick="openLight(this)"><img src="evening.jpg" alt="Вечер"><span class="g-cap">Вечер в «Космоболе»</span></div>
+<div class="g-item" onclick="openLight(this)"><img src="family.jpg" alt="Семья"><span class="g-cap">Боулинг всей семьёй</span></div>
+<div class="g-item" onclick="openLight(this)"><img src="dancefloor.jpg" alt="Танцпол"><span class="g-cap">Танцпол</span></div>
+<div class="g-item" onclick="openLight(this)"><img src="lanes.jpg" alt="Дорожки"><span class="g-cap">Дорожки</span></div>
+<div class="g-item" onclick="openLight(this)"><img src="hall.jpg" alt="Холл"><span class="g-cap">Холл и VIP</span></div>
+</div></div></section>
+
+<section id="vip"><div class="container">
+<h2 class="sec-title">VIP-залы</h2>
+<div class="grid">
+<div class="card"><h3>Малый VIP</h3><p>до 9 чел. Депозит 12 000 ₽</p></div>
+<div class="card"><h3>Белая VIP</h3><p>до 22 чел. Депозит 20 000 ₽</p></div>
+</div></div></section>
+
+<section id="news"><div class="container">
+<h2 class="sec-title">Новости</h2>
+<div class="grid">
+<div class="card"><p style="color:var(--org);font-size:.8rem">15 ноября</p><h3>Корпоративы</h3><p>Скидка 15%.</p></div>
+<div class="card"><p style="color:var(--org);font-size:.8rem">28 октября</p><h3>Караоке</h3><p>Скидка 20%.</p></div>
+<div class="card"><p style="color:var(--org);font-size:.8rem">10 октября</p><h3>Бизнес-ланч</h3><p>Новое меню.</p></div>
+<div class="card"><p style="color:var(--org);font-size:.8rem">1 октября</p><h3>Ночь боулинга</h3><p>Безлимит для компаний.</p></div>
+</div></div></section>
+
+<section id="faq"><div class="container">
+<h2 class="sec-title">Вопросы</h2>
+<div style="display:flex;flex-direction:column;gap:10px;max-width:700px">
+<details style="background:var(--card);border-radius:12px;padding:10px 15px"><summary style="cursor:pointer;font-weight:600">Как забронировать?</summary><p style="color:var(--mut);margin-top:8px;font-size:.9rem">Позвоните по телефону 751-100.</p></details>
+<details style="background:var(--card);border-radius:12px;padding:10px 15px"><summary style="cursor:pointer;font-weight:600">Со скольки лет?</summary><p style="color:var(--mut);margin-top:8px;font-size:.9rem">18+</p></details>
+<details style="background:var(--card);border-radius:12px;padding:10px 15px"><summary style="cursor:pointer;font-weight:600">Есть парковка?</summary><p style="color:var(--mut);margin-top:8px;font-size:.9rem">Да, рядом со зданием.</p></details>
+</div></div></section>
+
+<footer id="contacts" class="footer"><div class="container">
+<div><strong>CDC GALAXY</strong><br>ул. Красильникова, 8<br>18+</div>
+<div>📞 751-100 — столики<br>📞 754-100 — боулинг<br>✉️ galaxy-show@mail.ru</div>
+<div>Ежедневно с 12:00 до 02:00</div>
+</div></footer>
+
+<!-- Модалка -->
+<div class="modal" id="mBook"><div class="modal-box">
+<button class="close" onclick="closeModal()">×</button>
+<h2 style="margin-bottom:15px">Забронировать</h2>
+<form id="bForm">
+<div class="f-group"><label>Имя</label><input type="text" id="fName" required placeholder="Иван"></div>
+<div class="f-group"><label>Телефон</label><input type="tel" id="fPhone" required placeholder="+7..."></div>
+<div class="f-group"><label>Дата и время</label><input type="text" id="fDate" required placeholder="25 октября 19:00"></div>
+<label class="f-check"><input type="checkbox" id="fCheck"><span>Согласен с <a href="#">политикой</a></span></label>
+<button type="submit" class="btn btn-org" style="width:100%">Отправить</button>
+<div class="f-status" id="fStatus"></div>
+</form>
+</div></div>
+
+<!-- Лайтбокс -->
+<div class="modal" id="mLight" onclick="closeLight()"><img id="lightImg" style="max-height:90vh;max-width:95vw" src=""></div>
+
+<!-- АДМИНКА -->
+<div id="admin">
+<div class="login" id="loginBox">
+<div class="login-box">
+<h2>Вход</h2>
+<div class="err" id="logErr">Неверный логин или пароль</div>
+<input type="text" id="user" placeholder="Логин (admin)">
+<input type="password" id="pass" placeholder="Пароль (1234)">
+<button onclick="doLogin()">Войти</button>
+</div>
+</div>
+<div id="dash" style="display:none;width:100%;height:100vh">
+<div class="side">
+<h2>CDC GALAXY</h2>
+<ul><li>📋 Заявки</li></ul>
+<button onclick="doLogout()">Выйти</button>
+</div>
+<div class="main">
+<h1>Заявки</h1>
+<table>
+<thead><tr><th>ID</th><th>Имя</th><th>Телефон</th><th>Дата</th><th>Время</th><th></th></tr></thead>
+<tbody id="tbody"></tbody>
+</table>
+</div>
+</div>
+</div>
+
+<script>
+// Сайт
+function openModal(){document.getElementById('mBook').classList.add('open')}
+function closeModal(){document.getElementById('mBook').classList.remove('open')}
+function openLight(el){document.getElementById('lightImg').src=el.querySelector('img').src;document.getElementById('mLight').classList.add('open')}
+function closeLight(){document.getElementById('mLight').classList.remove('open')}
+
+// Форма
+document.getElementById('bForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  const st=document.getElementById('fStatus');
+  if(!document.getElementById('fCheck').checked){
+    st.className='f-status err';st.textContent='Согласитесь с политикой!';return;
+  }
+  const name=document.getElementById('fName').value;
+  const phone=document.getElementById('fPhone').value;
+  const date=document.getElementById('fDate').value;
+  let arr=JSON.parse(localStorage.getItem('bookings'))||[];
+  arr.unshift({name,phone,date,timestamp:new Date().toLocaleString('ru-RU')});
+  localStorage.setItem('bookings',JSON.stringify(arr));
+  st.className='f-status ok';st.textContent='✅ Забронировано!';
+  this.reset();
+  setTimeout(()=>{
+    closeModal();
+    document.getElementById('admin').classList.add('on');
+    document.getElementById('loginBox').style.display='flex';
+    document.getElementById('dash').style.display='none';
+  },1000);
+});
+
+// Админка
+function doLogin(){
+  if(document.getElementById('user').value==='admin' && document.getElementById('pass').value==='1234'){
+    document.getElementById('loginBox').style.display='none';
+    document.getElementById('dash').style.display='flex';
+    renderTable();
+  }else{
+    document.getElementById('logErr').style.display='block';
+  }
+}
+function doLogout(){document.getElementById('admin').classList.remove('on');document.getElementById('user').value='';document.getElementById('pass').value='';}
+function renderTable(){
+  const arr=JSON.parse(localStorage.getItem('bookings'))||[];
+  const tb=document.getElementById('tbody');
+  if(arr.length===0){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:#888;padding:20px">Нет заявок</td></tr>';return;}
+  tb.innerHTML=arr.map((b,i)=>`<tr>
+    <td>${arr.length-i}</td><td>${b.name}</td><td>${b.phone}</td>
+    <td><strong>${b.date}</strong></td><td>${b.timestamp}</td>
+    <td><button class="del-btn" onclick="delBook(${i})">Удалить</button></td>
+  </tr>`).join('');
+}
+function delBook(i){
+  let arr=JSON.parse(localStorage.getItem('bookings'))||[];
+  arr.splice(i,1);localStorage.setItem('bookings',JSON.stringify(arr));renderTable();
+}
+</script>
+</body>
+</html>
